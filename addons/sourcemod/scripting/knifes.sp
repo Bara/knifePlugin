@@ -31,7 +31,7 @@ public Plugin myinfo =
 	author = "Bara",
 	description = "",
 	version = "1.0.0",
-	url = "github.com/Bara20/weaponPaints"
+	url = "github.com/Bara20/knifePlugin"
 };
 
 public void OnPluginStart()
@@ -64,8 +64,6 @@ public void OnPluginStart()
 
 public void CSGOItems_OnItemsSynced()
 {
-	PrintToServer("CSGOItems_OnItemsSynced");
-	
 	UpdateKnifesConfig();
 }
 
