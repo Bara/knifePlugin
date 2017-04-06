@@ -47,11 +47,12 @@ public void OnPluginStart()
 	g_cMessage = CreateConVar("knifes_show_message", "1", "Show message on knife selection", _, true, 0.0, true, 1.0);
 	g_cShowDisableKnifes = CreateConVar("knifes_show_disabled_knife", "1", "Show disabled knifes (for user without flag)", _, true, 0.0, true, 1.0);
 	
+	HookEvent("player_spawn", Event_PlayerSpawn);
+	
 	for (int i = 0; i <= MaxClients; i++)
 	{
 		if(IsClientValid(i))
 		{
-			OnClientPutInServer(i);
 			OnClientCookiesCached(i);
 		}
 	}
@@ -67,11 +68,6 @@ public void CSGOItems_OnItemsSynced()
 	UpdateKnifesConfig();
 }
 
-public void OnClientPutInServer(int client)
-{
-	SDKHook(client, SDKHook_WeaponEquip, OnWeaponEquip);
-}
-
 public void OnClientCookiesCached(int client)
 {
 	char sDefIndex[8];
@@ -81,22 +77,6 @@ public void OnClientCookiesCached(int client)
 	if(iDefIndex > 0)
 	{
 		g_iKnife[client] = iDefIndex;
-	}
-}
-
-public Action OnWeaponEquip(int client, int weapon)
-{
-	char sClassname[KNIFE_LENGTH];
-	GetEdictClassname(weapon, sClassname, sizeof(sClassname));
-	
-	if(StrContains(sClassname, "weapon_knife", false) != 0)
-	{
-		return;
-	}
-	
-	if(g_iKnife[client] > 0)
-	{
-		SetEntProp(weapon, Prop_Send, "m_iItemDefinitionIndex", g_iKnife[client]); // Trigger ban
 	}
 }
 
@@ -110,6 +90,21 @@ public Action Command_Knife(int client, int args)
 	ShowKnifeMenu(client);
 	
 	return Plugin_Continue;
+}
+
+public Action Event_PlayerSpawn(Event event, const char[] name, bool dontBroadcast)
+{
+	RequestFrame(Frame_PlayerSpawn, event.GetInt("userid"));
+}
+
+public void Frame_PlayerSpawn(any userid)
+{
+	int client = GetClientOfUserId(userid);
+	
+	if (IsClientValid(client) && IsPlayerAlive(client))
+	{
+		ReplaceKnife(client);
+	}
 }
 
 public int Menu_Knife(Menu menu, MenuAction action, int client, int param)
@@ -134,8 +129,7 @@ public int Menu_Knife(Menu menu, MenuAction action, int client, int param)
 		
 		g_iSite[client] = menu.Selection;
 		
-		CSGOItems_RemoveKnife(client);
-		GivePlayerItem(client, "weapon_knife");
+		ReplaceKnife(client);
 		RequestFrame(Frame_OpenMenu, GetClientUserId(client));
 	}
 	else if (action == MenuAction_End)
@@ -308,4 +302,16 @@ bool HasFlags(int client, char[] flags)
 	}
 	
 	return false;
+}
+
+void ReplaceKnife(int client)
+{
+	if(g_iKnife[client] > 0)
+	{
+		char sClassname[32];
+		CSGOItems_GetWeaponClassNameByDefIndex(g_iKnife[client], sClassname, sizeof(sClassname));
+		CSGOItems_RemoveKnife(client);
+		int iKnife = GivePlayerItem(client, sClassname);
+		EquipPlayerWeapon(client, iKnife);
+	}
 }
