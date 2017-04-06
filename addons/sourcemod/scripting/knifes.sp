@@ -44,7 +44,7 @@ public void OnPluginStart()
 	
 	g_hKnifeCookie = RegClientCookie("knifes_cookie", "Cookie for Knife Def Index", CookieAccess_Private);
 	
-	g_cMessage = CreateConVar("knifes_show_message", "1", "Show messge on knife selection", _, true, 0.0, true, 1.0);
+	g_cMessage = CreateConVar("knifes_show_message", "1", "Show message on knife selection", _, true, 0.0, true, 1.0);
 	g_cShowDisableKnifes = CreateConVar("knifes_show_disabled_knife", "1", "Show disabled knifes (for user without flag)", _, true, 0.0, true, 1.0);
 	
 	for (int i = 0; i <= MaxClients; i++)
