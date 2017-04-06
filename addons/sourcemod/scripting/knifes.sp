@@ -214,7 +214,7 @@ void ShowKnifeMenu(int client)
 				PrintToChat(client, "%s ([%d] [%s (%d)] [%d] %s)", sDisplayName, defIndex, sFlags, strlen(sFlags), bFlag, sClassName);
 			}
 			
-			if (bFlag)
+			if (bFlag && g_iKnife[client] != defIndex)
 			{
 				menu.AddItem(sClassName, sDisplayName);
 			}
