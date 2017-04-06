@@ -1,0 +1,30 @@
+"Phrases"
+{
+	"Choose a Knife Currently"
+	{
+		"#format"		"{1:s}"
+		"en"			"Chosse a Knife\nCurrently: {1}"
+		"de"			"Wähle ein Messer\nAktuelles: {1}"
+	}
+	
+	"Choose a Knife"
+	{
+		"#format"		"{1:s}"
+		"en"			"Chosse a Knife:"
+		"de"			"Wähle ein Messer:"
+	}
+	
+	"T Knife"
+	{
+		"#format"		"{1:s}"
+		"en"			"{1} [T]"
+		"de"			"{1} [T]"
+	}
+	
+	"Knife Choosed"
+	{
+		"#format"		"{1:s}"
+		"en"			"You've choosen: {1}"
+		"de"			"Sie haben gewählt: {1}"
+	}
+}
