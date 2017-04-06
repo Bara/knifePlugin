@@ -9,7 +9,6 @@
 	
 	"Choose a Knife"
 	{
-		"#format"		"{1:s}"
 		"en"			"Chosse a Knife:"
 		"de"			"Wähle ein Messer:"
 	}
