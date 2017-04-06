@@ -5,7 +5,6 @@
 #include <sdktools>
 #include <csgoitems>
 #include <clientprefs>
-// #include <sendproxy>
 
 #include <multicolors>
 
@@ -48,7 +47,6 @@ public void OnPluginStart()
 	g_cMessage = CreateConVar("knifes_show_message", "1", "Show messge on knife selection", _, true, 0.0, true, 1.0);
 	g_cShowDisableKnifes = CreateConVar("knifes_show_disabled_knife", "1", "Show disabled knifes (for user without flag)", _, true, 0.0, true, 1.0);
 	
-	// Late load support
 	for (int i = 0; i <= MaxClients; i++)
 	{
 		if(IsClientValid(i))
@@ -88,8 +86,6 @@ public void OnClientCookiesCached(int client)
 	}
 }
 
-// bool changed;
-
 public Action OnWeaponEquip(int client, int weapon)
 {
 	char sClassname[KNIFE_LENGTH];
@@ -102,32 +98,9 @@ public Action OnWeaponEquip(int client, int weapon)
 	
 	if(g_iKnife[client] > 0)
 	{
-		// changed = false;
 		SetEntProp(weapon, Prop_Send, "m_iItemDefinitionIndex", g_iKnife[client]); // Trigger ban
-		// SendProxy_Hook(weapon, "m_iItemDefinitionIndex", Prop_Int, ProxyCallback);
 	}
 }
-
-/* public Action ProxyCallback(int entity, const char[] propname, int &iValue, int element)
-{
-	if(CSGOItems_IsValidWeapon(entity) && !changed)
-	{
-		int client = GetEntPropEnt(entity, Prop_Send, "m_hOwnerEntity");
-		
-		if(IsClientValid(client))
-		{
-			char sWorld[PLATFORM_MAX_PATH + 1];
-			CSGOItems_GetWeaponWorldModelByDefIndex(g_iKnife[client], sWorld, sizeof(sWorld));
-			SetEntityModel(entity, sWorld);
-			PrintToChat(client, "%N Knife changed to: %d", client, g_iKnife[client]);
-			iValue = g_iKnife[client];
-			changed = true;
-			return Plugin_Changed;
-		}
-	}		
-	
-	return Plugin_Continue;
-} */
 
 public Action Command_Knife(int client, int args)
 {
