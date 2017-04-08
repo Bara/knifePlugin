@@ -252,12 +252,12 @@ void UpdateKnifesConfig()
 			
 			bFound = kvConf.JumpToKey(sClassName, false);
 			
-			kvConf.JumpToKey(sClassName, true);
-			kvConf.SetString("name", sDisplayName);
-			kvConf.SetNum("defIndex", defIndex);
-			
 			if (!bFound)
 			{
+				kvConf.JumpToKey(sClassName, true);
+				kvConf.SetString("name", sDisplayName);
+				kvConf.SetNum("defIndex", defIndex);
+				
 				LogMessage("Knife %s ([%d] %s) added!", sDisplayName, defIndex, sClassName);
 			}
 			
