@@ -2770,7 +2770,7 @@ public int Native_RemoveWeapon(Handle hPlugin, int iNumParams)
 		return false;
 	}
 	
-	int iWeaponArraySize = GetEntPropArraySize(iClient, Prop_Send, "m_hMyWeapons");
+	// int iWeaponArraySize = GetEntPropArraySize(iClient, Prop_Send, "m_hMyWeapons");
 	
 	if (!CSGOItems_DropWeapon(iClient, iWeapon)) {
 		return false;
