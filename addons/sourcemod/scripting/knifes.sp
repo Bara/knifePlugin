@@ -23,7 +23,7 @@ ConVar g_cShowDisableKnifes = null;
 
 Handle g_hKnifeCookie = null;
 
-char g_sKnifeConfig[PLATFORM_MAX_PATH + 1] = "";
+char g_sConfig[PLATFORM_MAX_PATH + 1] = "";
 
 public Plugin myinfo = 
 {
@@ -36,7 +36,7 @@ public Plugin myinfo =
 
 public void OnPluginStart()
 {
-	BuildPath(Path_SM, g_sKnifeConfig, sizeof(g_sKnifeConfig), "configs/knifes.cfg");
+	BuildPath(Path_SM, g_sConfig, sizeof(g_sConfig), "configs/knifes.cfg");
 	
 	LoadTranslations("knifes.phrases");
 	
@@ -227,9 +227,9 @@ void UpdateKnifesConfig()
 {
 	KeyValues kvConf = new KeyValues("Knifes");
 	
-	if (!kvConf.ImportFromFile(g_sKnifeConfig))
+	if (!kvConf.ImportFromFile(g_sConfig))
 	{
-		ThrowError("Can' find or read the file %s...", g_sKnifeConfig);
+		ThrowError("Can' find or read the file %s...", g_sConfig);
 		return;
 	}
 	
@@ -248,15 +248,24 @@ void UpdateKnifesConfig()
 				Format(sDisplayName, sizeof(sDisplayName), "%T", "T Knife", LANG_SERVER, sDisplayName);
 			}
 			
+			bool bFound = false;
+			
+			bFound = kvConf.JumpToKey(sClassName, false);
+			
 			kvConf.JumpToKey(sClassName, true);
 			kvConf.SetString("name", sDisplayName);
 			kvConf.SetNum("defIndex", defIndex);
+			
+			if (!bFound)
+			{
+				LogMessage("Knife %s ([%d] %s) added!", sDisplayName, defIndex, sClassName);
+			}
 			
 			kvConf.Rewind();
 		}
 	}
 	
-	kvConf.ExportToFile(g_sKnifeConfig);
+	kvConf.ExportToFile(g_sConfig);
 	delete kvConf;
 }
 
@@ -264,9 +273,9 @@ void GetKnifeFlags(const char[] className, char[] flags, int size)
 {
 	KeyValues kvConf = new KeyValues("Knifes");
 	
-	if (!kvConf.ImportFromFile(g_sKnifeConfig))
+	if (!kvConf.ImportFromFile(g_sConfig))
 	{
-		ThrowError("Can' find or read the file %s...", g_sKnifeConfig);
+		ThrowError("Can' find or read the file %s...", g_sConfig);
 		return;
 	}
 	
