@@ -320,7 +320,44 @@ void ReplaceKnife(int client)
 		char sClassname[32];
 		CSGOItems_GetWeaponClassNameByDefIndex(g_iKnife[client], sClassname, sizeof(sClassname));
 		CSGOItems_RemoveKnife(client);
-		int iKnife = GivePlayerItem(client, sClassname);
-		EquipPlayerWeapon(client, iKnife);
+		
+		DataPack pack = new DataPack();
+		RequestFrame(Frame_GivePlayerItem, pack);
+		pack.WriteCell(GetClientUserId(client));
+		pack.WriteString(sClassname);
 	}
 }
+
+public void Frame_GivePlayerItem(any pack)
+{
+	ResetPack(pack);
+	int client = GetClientOfUserId(ReadPackCell(pack));
+	char sClass[32];
+	ReadPackString(pack, sClass, sizeof(sClass));
+	delete view_as<DataPack>(pack);
+	
+	if(IsClientValid(client))
+	{
+		int iWeapon = GivePlayerItem(client, sClass);
+		EquipPlayerWeapon(client, iWeapon);
+		
+		DataPack pack2 = new DataPack();
+		RequestFrame(Frame_SetActionWeapon, pack2);
+		pack2.WriteCell(GetClientUserId(client));
+		pack2.WriteCell(iWeapon);
+	}
+}
+
+public void Frame_SetActionWeapon(any pack)
+{
+	ResetPack(pack);
+	int client = GetClientOfUserId(ReadPackCell(pack));
+	int weapon = ReadPackCell(pack);
+	delete view_as<DataPack>(pack);
+	
+	if (IsClientValid(client) && CSGOItems_IsValidWeapon(weapon))
+	{
+		CSGOItems_SetActiveWeapon(client, weapon);
+	}
+}
+
