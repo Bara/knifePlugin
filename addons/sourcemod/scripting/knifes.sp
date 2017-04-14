@@ -25,6 +25,8 @@ Handle g_hKnifeCookie = null;
 
 char g_sConfig[PLATFORM_MAX_PATH + 1] = "";
 
+KeyValues g_kvConf = null;
+
 public Plugin myinfo = 
 {
 	name = "Knifes",
@@ -37,6 +39,14 @@ public Plugin myinfo =
 public void OnPluginStart()
 {
 	BuildPath(Path_SM, g_sConfig, sizeof(g_sConfig), "configs/knifes.cfg");
+	
+	g_kvConf = new KeyValues("Knifes");
+	
+	if (!g_kvConf.ImportFromFile(g_sConfig))
+	{
+		ThrowError("Can' find or read the file %s...", g_sConfig);
+		return;
+	}
 	
 	LoadTranslations("knifes.phrases");
 	
@@ -225,14 +235,6 @@ void ShowKnifeMenu(int client)
 
 void UpdateKnifesConfig()
 {
-	KeyValues kvConf = new KeyValues("Knifes");
-	
-	if (!kvConf.ImportFromFile(g_sConfig))
-	{
-		ThrowError("Can' find or read the file %s...", g_sConfig);
-		return;
-	}
-	
 	for (int i = 0; i <= CSGOItems_GetWeaponCount(); i++)
 	{
 		int defIndex = CSGOItems_GetWeaponDefIndexByWeaponNum(i);
@@ -250,39 +252,30 @@ void UpdateKnifesConfig()
 			
 			bool bFound = false;
 			
-			bFound = kvConf.JumpToKey(sClassName, false);
+			bFound = g_kvConf.JumpToKey(sClassName, false);
 			
 			if (!bFound)
 			{
-				kvConf.JumpToKey(sClassName, true);
-				kvConf.SetString("name", sDisplayName);
-				kvConf.SetNum("defIndex", defIndex);
+				g_kvConf.JumpToKey(sClassName, true);
+				g_kvConf.SetString("name", sDisplayName);
+				g_kvConf.SetNum("defIndex", defIndex);
 				
 				LogMessage("Knife %s ([%d] %s) added!", sDisplayName, defIndex, sClassName);
 			}
 			
-			kvConf.Rewind();
+			g_kvConf.Rewind();
 		}
 	}
 	
-	kvConf.ExportToFile(g_sConfig);
-	delete kvConf;
+	g_kvConf.ExportToFile(g_sConfig);
 }
 
 void GetKnifeFlags(const char[] className, char[] flags, int size)
 {
-	KeyValues kvConf = new KeyValues("Knifes");
+	g_kvConf.JumpToKey(className);
+	g_kvConf.GetString("flag", flags, size);
 	
-	if (!kvConf.ImportFromFile(g_sConfig))
-	{
-		ThrowError("Can' find or read the file %s...", g_sConfig);
-		return;
-	}
-	
-	kvConf.JumpToKey(className);
-	kvConf.GetString("flag", flags, size);
-	
-	delete kvConf;
+	g_kvConf.Rewind();
 }
 
 bool HasFlags(int client, char[] flags)
